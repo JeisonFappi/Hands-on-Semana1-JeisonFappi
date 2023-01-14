@@ -1,20 +1,20 @@
 package com.eldorado.org.arquivo;
 
 import com.eldorado.org.modelo.Faturamento;
+import com.eldorado.org.modelo.Nota;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GerenciarArquivo {
     private static final Logger LOGGER = Logger.getLogger(GerenciarArquivo.class.getName());
     static final String CAMINHO = "resources/txt/";
-    public List<Faturamento> lerArquivo(String nomeArquivo) {
+    public List<Faturamento> lerArquivoFaturamento(String nomeArquivo) {
         List<Faturamento> faturamentos = new ArrayList<>();
 
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(String.format("%s/%s", CAMINHO, nomeArquivo)))) {
@@ -43,5 +43,32 @@ public class GerenciarArquivo {
             LOGGER.log(Level.SEVERE, e.getMessage());
         }
         return faturamentos;
+    }
+    public List<Nota> lerArquivoNota(String nomeArquivo) {
+        List<Nota> notas = new ArrayList<>();
+
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(String.format("%s/%s", CAMINHO, nomeArquivo)))) {
+            bufferedReader.readLine();
+            String line = bufferedReader.readLine();
+            while (line != null) {
+                String[] vetor = line.split(";");
+                var nota = new Nota();
+
+                if (vetor.length == 6) {
+                    nota.setEmpresa(vetor[0]);
+                    nota.setMes(vetor[1]);
+                    nota.setAno(vetor[2]);
+                    nota.setValor(vetor[3]);
+                    nota.setDataEmissao(vetor[4]);
+                    nota.setNota(vetor[5]);
+                    notas.add(nota);
+                }
+
+                line = bufferedReader.readLine();
+            }
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage());
+        }
+        return notas;
     }
 }
